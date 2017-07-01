@@ -15,6 +15,7 @@ local q_add_vehicle = vRP.sql:prepare("INSERT IGNORE INTO vrp_user_vehicles(user
 local q_remove_vehicle = vRP.sql:prepare("DELETE FROM vrp_user_vehicles WHERE user_id = @user_id AND vehicle = @vehicle")
 local q_get_vehicles = vRP.sql:prepare("SELECT vehicle FROM vrp_user_vehicles WHERE user_id = @user_id")
 local q_get_vehicle = vRP.sql:prepare("SELECT vehicle FROM vrp_user_vehicles WHERE user_id = @user_id AND vehicle = @vehicle")
+local q_get_vehicle_owned = vRP.sql:prepare("SELECT * FROM vrp_user_vehicles WHERE user_id = @user_id AND vehicle = @vehicle")
 
 -- load config
 
@@ -61,12 +62,48 @@ for group,vehicles in pairs(vehicle_groups) do
           -- spawn vehicle
           local vehicle = vehicles[vname]
           if vehicle then
-            vRP.closeMenu(player)
-            vRPclient.spawnGarageVehicle(player,{veh_type,vname})
+            q_get_vehicle_owned:bind("@user_id",user_id)
+            q_get_vehicle_owned:bind("@vehicle", vname)
+            local test = q_get_vehicle_owned:query()
+            local carinfo
+            local tunedcar = false
+            local mods = {}
+            local car_id
+            local colors = {}
+            local extracolors = {}
+            while test:fetch() do
+              if(test:getValue("car_id") ~= nil) then
+                 tunedcar = true
+                 car_id = test:getValue("car_id")
+                 colors[0] = test:getValue("vehicle_colorprimary")
+                 colors[1] = test:getValue("vehicle_colorsecondary")
+                 extracolors[0] = test:getValue("vehicle_pearlescentcolor")
+                 extracolors[1] = test:getValue("vehicle_wheelcolor")
+                 for i=0,24 do
+                    mods[i] = test:getValue("mod"..i)
+                 end
+              end
+            end
+            print(vname)
+             if tunedcar == false then
+                vRP.closeMenu(player)
+                vRPclient.spawnGarageVehicle(player,{veh_type,vname})
+              else
+                print("A TUNED VEHICLE")
+                for k,v in pairs(mods) do
+                  print("MOD " .. k .. " Value" .. v)
+                end
+                print(car_id)
+                print(veh_type)
+                print(vname)
+                print("Try to SpawnTunedVehicle")
+                vRP.closeMenu(player)
+                vRPclient.SpawnTunedVehicle(player,{veh_type,vname,mods,car_id,colors,extracolors})
+              end
           end
         end
       end
-      
+
       -- get player owned vehicles
       q_get_vehicles:bind("@user_id",user_id)
       local pvehicles = q_get_vehicles:query():toTable()
@@ -118,7 +155,7 @@ for group,vehicles in pairs(vehicle_groups) do
           end
         end
       end
-      
+
       -- get player owned vehicles (indexed by vehicle type name in lower case)
       q_get_vehicles:bind("@user_id",user_id)
       local _pvehicles = q_get_vehicles:query():toTable()
@@ -177,7 +214,7 @@ for group,vehicles in pairs(vehicle_groups) do
           end
         end
       end
-      
+
       -- get player owned vehicles (indexed by vehicle type name in lower case)
       q_get_vehicles:bind("@user_id",user_id)
       local _pvehicles = q_get_vehicles:query():toTable()
@@ -235,7 +272,7 @@ for group,vehicles in pairs(vehicle_groups) do
           end
         end
       end
-      
+
       -- get player owned vehicles (indexed by vehicle type name in lower case)
       q_get_vehicles:bind("@user_id",user_id)
       local _pvehicles = q_get_vehicles:query():toTable()
@@ -263,7 +300,7 @@ for group,vehicles in pairs(vehicle_groups) do
   end,lang.garage.rent.description()}
 
   menu[lang.garage.store.title()] = {function(player,choice)
-    vRPclient.despawnGarageVehicle(player,{veh_type,15}) 
+    vRPclient.despawnGarageVehicle(player,{veh_type,15})
   end, lang.garage.store.description()}
 end
 
@@ -280,7 +317,7 @@ local function build_client_garages(source)
         -- enter
         local garage_enter = function(player,area)
           local user_id = vRP.getUserId(source)
-          if user_id ~= nil and vRP.hasPermissions(user_id,gcfg.permissions or {}) then
+          if user_id ~= nil and (gcfg.permission == nil or vRP.hasPermission(user_id,gcfg.permission)) then
             local menu = garage_menus[gtype]
             if menu then
               vRP.openMenu(player,menu)
@@ -360,7 +397,7 @@ local function ch_vehicle(player,choice)
         -- build vehicle menu
         local menu = {name=lang.vehicle.title(), css={top="75px",header_color="rgba(255,125,0,0.75)"}}
 
-        for k,v in pairs(veh_actions) do 
+        for k,v in pairs(veh_actions) do
           menu[k] = {function(player,choice) v[1](user_id,player,vtype,name) end, v[2]}
         end
 

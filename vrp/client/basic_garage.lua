@@ -6,8 +6,6 @@ function tvRP.spawnGarageVehicle(vtype,name) -- vtype is the vehicle type (one v
   local vehicle = vehicles[vtype]
   if vehicle and not IsVehicleDriveable(vehicle[3]) then -- precheck if vehicle is undriveable
     -- despawn vehicle
-    SetVehicleHasBeenOwnedByPlayer(vehicle[3],false)
-    Citizen.InvokeNative(0xAD738C3085FE7E11, vehicle[3], false, true) -- set not as mission entity
     SetVehicleAsNoLongerNeeded(Citizen.PointerValueIntInitialized(vehicle[3]))
     Citizen.InvokeNative(0xEA386986E786A54F, Citizen.PointerValueIntInitialized(vehicle[3]))
     vehicles[vtype] = nil
@@ -32,9 +30,8 @@ function tvRP.spawnGarageVehicle(vtype,name) -- vtype is the vehicle type (one v
       SetVehicleOnGroundProperly(nveh)
       SetEntityInvincible(nveh,false)
       SetPedIntoVehicle(GetPlayerPed(-1),nveh,-1) -- put player inside
-      SetVehicleNumberPlateText(nveh, "P "..tvRP.getRegistrationNumber())
+      SetVehicleNumberPlateText(nveh, tvRP.getRegistrationNumber())
       Citizen.InvokeNative(0xAD738C3085FE7E11, nveh, true, true) -- set as mission entity
-      SetVehicleHasBeenOwnedByPlayer(nveh,true)
 
       if not cfg.vehicle_migration then
         local nid = NetworkGetNetworkIdFromEntity(nveh)
@@ -50,6 +47,68 @@ function tvRP.spawnGarageVehicle(vtype,name) -- vtype is the vehicle type (one v
   end
 end
 
+function tvRP.SpawnTunedVehicle(vtype,name,mods,car_id,colors,extracolors) -- vtype is the vehicle type (one vehicle per type allowed at the same time)
+
+  local vehicle = vehicles[vtype]
+  if vehicle and not IsVehicleDriveable(vehicle[3]) then -- precheck if vehicle is undriveable
+    -- despawn vehicle
+    SetVehicleAsNoLongerNeeded(Citizen.PointerValueIntInitialized(vehicle[3]))
+    Citizen.InvokeNative(0xEA386986E786A54F, Citizen.PointerValueIntInitialized(vehicle[3]))
+    vehicles[vtype] = nil
+  end
+
+  vehicle = vehicles[vtype]
+  if vehicle == nil then
+    -- load vehicle model
+    local mhash = GetHashKey(name)
+
+    local i = 0
+    while not HasModelLoaded(mhash) and i < 10000 do
+      RequestModel(mhash)
+      Citizen.Wait(10)
+      i = i+1
+    end
+
+    -- spawn car
+    if HasModelLoaded(mhash) then
+      local x,y,z = tvRP.getPosition()
+      local nveh = CreateVehicle(mhash, x,y,z+0.5, 0.0, true, false)
+      --Apply Mods
+
+      for k,v in pairs(mods) do
+        SetVehicleModKit(nveh,0)
+        SetVehicleMod(nveh, tonumber(k), tonumber(v))
+
+      end
+
+      if colors then
+        SetVehicleColours(nveh,tonumber(colors[0]), tonumber(colors[1]))
+      end
+      if extracolors then
+        SetVehicleExtraColours(nveh,tonumber(extracolors[0]), tonumber(extracolors[1]))
+      end
+      SetVehicleOnGroundProperly(nveh)
+      SetEntityInvincible(nveh,false)
+      SetPedIntoVehicle(GetPlayerPed(-1),nveh,-1) -- put player inside
+      local plate = tvRP.getRegistrationNumber() .. car_id
+      tvRP.notify("Plate is: ".. plate)
+      SetVehicleNumberPlateText(nveh, plate)
+      Citizen.InvokeNative(0xAD738C3085FE7E11, nveh, true, true) -- set as mission entity
+
+      if not cfg.vehicle_migration then
+        local nid = NetworkGetNetworkIdFromEntity(nveh)
+        SetNetworkIdCanMigrate(nid,false)
+      end
+
+      vehicles[vtype] = {vtype,name,nveh} -- set current vehicule
+
+      SetModelAsNoLongerNeeded(mhash)
+    end
+  else
+    tvRP.notify("Du kannst nur ein Fahrzeug vom Typ "..vtype.." zeitgleich aus der Garage nehmen.")
+  end
+end
+
 function tvRP.despawnGarageVehicle(vtype,max_range)
   local vehicle = vehicles[vtype]
   if vehicle then
@@ -58,8 +117,6 @@ function tvRP.despawnGarageVehicle(vtype,max_range)
 
     if GetDistanceBetweenCoords(x,y,z,px,py,pz,true) < max_range then -- check distance with the vehicule
       -- remove vehicle
-      SetVehicleHasBeenOwnedByPlayer(vehicle[3],false)
-      Citizen.InvokeNative(0xAD738C3085FE7E11, vehicle[3], false, true) -- set not as mission entity
       SetVehicleAsNoLongerNeeded(Citizen.PointerValueIntInitialized(vehicle[3]))
       Citizen.InvokeNative(0xEA386986E786A54F, Citizen.PointerValueIntInitialized(vehicle[3]))
       vehicles[vtype] = nil
@@ -241,5 +298,3 @@ function tvRP.vc_toggleLock(vtype)
     end
   end
 end
-
-
