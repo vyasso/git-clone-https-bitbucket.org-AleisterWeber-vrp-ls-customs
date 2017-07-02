@@ -1,8 +1,8 @@
 local Tunnel = require("resources/vrp/lib/Tunnel")
 local Proxy = require("resources/vrp/lib/Proxy")
-local MySQL = require("resources/vRP/lib/MySQL/MySQL")
-vRP = Proxy.getInterface("vRP")
-vRPclient = Tunnel.getInterface("vRP","lscustoms")
+local MySQL = require("resources/vrp/lib/MySQL/MySQL")
+vRP = Proxy.getInterface("vrp")
+vRPclient = Tunnel.getInterface("vrp","lscustoms")
 
 local sql = MySQL.open("HOST","USER","PASSWORD","DATABASE")
 local tbl = {
