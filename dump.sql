@@ -1,6 +1,6 @@
 
 ALTER TABLE `vrp_user_vehicles`
-ADD  `car_id` int(11) NOT NULL,
+ADD  `car_id` int(11) UNIQUE,
 ADD  `tyresmoke` varchar(45) DEFAULT '255,255,255',
 ADD  `mod0` varchar(45) DEFAULT '-1',
 ADD  `mod1` varchar(45) DEFAULT '-1',
@@ -30,4 +30,6 @@ ADD  `mod24` varchar(45) DEFAULT '-1',
 ADD  `vehicle_colorprimary` varchar(60) DEFAULT NULL,
 ADD  `vehicle_colorsecondary` varchar(60) DEFAULT NULL,
 ADD  `vehicle_pearlescentcolor` varchar(60) DEFAULT NULL,
-ADD  `vehicle_wheelcolor` varchar(60) DEFAULT NULL
+ADD  `vehicle_wheelcolor` varchar(60) DEFAULT NULL;
+
+ALTER TABLE `vrp_user_vehicles` CHANGE `car_id` `car_id` INT(11) NULL DEFAULT NULL AUTO_INCREMENT;
