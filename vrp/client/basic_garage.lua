@@ -117,6 +117,8 @@ function tvRP.despawnGarageVehicle(vtype,max_range)
 
     if GetDistanceBetweenCoords(x,y,z,px,py,pz,true) < max_range then -- check distance with the vehicule
       -- remove vehicle
+      SetVehicleHasBeenOwnedByPlayer(vehicle[3],false)
+      Citizen.InvokeNative(0xAD738C3085FE7E11, vehicle[3], false, true) -- set not as mission entity
       SetVehicleAsNoLongerNeeded(Citizen.PointerValueIntInitialized(vehicle[3]))
       Citizen.InvokeNative(0xEA386986E786A54F, Citizen.PointerValueIntInitialized(vehicle[3]))
       vehicles[vtype] = nil
