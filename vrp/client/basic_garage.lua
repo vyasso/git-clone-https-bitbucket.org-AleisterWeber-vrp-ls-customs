@@ -80,7 +80,7 @@ function tvRP.SpawnTunedVehicle(vtype,name,mods,car_id,colors,extracolors) -- vt
         SetVehicleMod(nveh, tonumber(k), tonumber(v))
 
       end
-      if name ~= "police" or name ~= "police1" or name ~= "police2" then
+      if vtype ~= "police" then
         if colors then
           SetVehicleColours(nveh,tonumber(colors[0]), tonumber(colors[1]))
         end
