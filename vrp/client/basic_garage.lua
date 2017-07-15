@@ -80,13 +80,14 @@ function tvRP.SpawnTunedVehicle(vtype,name,mods,car_id,colors,extracolors) -- vt
         SetVehicleMod(nveh, tonumber(k), tonumber(v))
 
       end
-
-      if colors then
-        SetVehicleColours(nveh,tonumber(colors[0]), tonumber(colors[1]))
-      end
-      if extracolors then
-        SetVehicleExtraColours(nveh,tonumber(extracolors[0]), tonumber(extracolors[1]))
-      end
+      if name ~= "police" or name ~= "police1" or name ~= "police2" then
+        if colors then
+          SetVehicleColours(nveh,tonumber(colors[0]), tonumber(colors[1]))
+        end
+        if extracolors then
+          SetVehicleExtraColours(nveh,tonumber(extracolors[0]), tonumber(extracolors[1]))
+        end
+    end
       SetVehicleOnGroundProperly(nveh)
       SetEntityInvincible(nveh,false)
       SetPedIntoVehicle(GetPlayerPed(-1),nveh,-1) -- put player inside
