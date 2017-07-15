@@ -105,7 +105,7 @@ function tvRP.SpawnTunedVehicle(vtype,name,mods,car_id,colors,extracolors) -- vt
       SetModelAsNoLongerNeeded(mhash)
     end
   else
-    tvRP.notify("Du kannst nur ein Fahrzeug vom Typ "..vtype.." zeitgleich aus der Garage nehmen.")
+    tvRP.notify("You can only take one vehicle of type "..vtype.." from the garage out at a time.")
   end
 end
 

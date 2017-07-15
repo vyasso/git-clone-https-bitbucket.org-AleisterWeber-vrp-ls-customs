@@ -1,4 +1,3 @@
-
 local lsc = {
 	inside = false,
 	title = "Los Santos Customs",
@@ -120,7 +119,7 @@ local lsc = {
 	,["primarymetallic"] = {
 			title = "primary colors",
 			name = "primarymetallic",
-			buttons = {
+			buttons = {			-- COSTS BELOW CAN BE EDITED TO REFLECT A COST TO BE SUBTRACTED
 				{name = "Black",costs = 0, colorindex = 0, description = "", centre = 0, font = 0, scale = 0.4},
 				{name = "Carbon Black",costs = 0, colorindex = 147, description = "", centre = 0, font = 0, scale = 0.4},
 				{name = "Hraphite",costs = 0, colorindex = 1, description = "", centre = 0, font = 0, scale = 0.4},
@@ -1007,7 +1006,7 @@ local lsc = {
 		title = "CATEGORIES",
 		name = "repair",
 		buttons = {
-			{name = "Repair vehicle", description = "Full body repair and engine service.", costs = 0, centre = 0, font = 0, scale = 0.4}
+			{name = "Repair vehicle", description = "Full body repair and engine service.", costs = 5000, centre = 0, font = 0, scale = 0.4}
 
 		}
 	},
@@ -1016,11 +1015,11 @@ local lsc = {
 		name = "armor",
 		buttons = {
 			{name = "None",modtype = 16, mod = -1,costs = 0, description = "", centre = 0, font = 0, scale = 0.4},
-			{name = "Armor Upgrade 20%",modtype = 16, mod = false, costs = 0, description = "", centre = 0, font = 0, scale = 0.4},
-			{name = "Armor Upgrade 40%",modtype = 16, mod = 1, costs = 0, description = "", centre = 0, font = 0, scale = 0.4},
-			{name = "Armor Upgrade 60%",modtype = 16, mod = 2, costs = 0, description = "", centre = 0, font = 0, scale = 0.4},
-			{name = "Armor Upgrade 80%",modtype = 16, mod = 3, costs = 0, description = "", centre = 0, font = 0, scale = 0.4},
-			{name = "Armor Upgrade 100%",modtype = 16, mod = 4, costs = 0, description = "", centre = 0, font = 0, scale = 0.4}
+			{name = "Armor Upgrade 20%",modtype = 16, mod = false, costs = 100, description = "", centre = 0, font = 0, scale = 0.4},
+			{name = "Armor Upgrade 40%",modtype = 16, mod = 1, costs = 3590, description = "", centre = 0, font = 0, scale = 0.4},
+			{name = "Armor Upgrade 60%",modtype = 16, mod = 2, costs = 3890, description = "", centre = 0, font = 0, scale = 0.4},
+			{name = "Armor Upgrade 80%",modtype = 16, mod = 3, costs = 8000, description = "", centre = 0, font = 0, scale = 0.4},
+			{name = "Armor Upgrade 100%",modtype = 16, mod = 4, costs = 10000, description = "", centre = 0, font = 0, scale = 0.4}
 
 		}
 	},
@@ -1028,10 +1027,10 @@ local lsc = {
 		title = "brakes",
 		name = "brakes",
 		buttons = {
-			{name = "Stock Brakes",modtype = 12, mod = -1, costs = 0, description = "", centre = 0, font = 0, scale = 0.4},
-			{name = "Street Brakes",modtype = 12, mod = false, costs = 0, description = "", centre = 0, font = 0, scale = 0.4},
-			{name = "Sport Brakes",modtype = 12, mod = 1, costs = 0, description = "", centre = 0, font = 0, scale = 0.4},
-			{name = "Race Brakes",modtype = 12, mod = 2, costs = 0, description = "", centre = 0, font = 0, scale = 0.4}
+			{name = "Stock Brakes",modtype = 12, mod = -1, costs = 100, description = "", centre = 0, font = 0, scale = 0.4},
+			{name = "Street Brakes",modtype = 12, mod = false, costs = 200, description = "", centre = 0, font = 0, scale = 0.4},
+			{name = "Sport Brakes",modtype = 12, mod = 1, costs = 300, description = "", centre = 0, font = 0, scale = 0.4},
+			{name = "Race Brakes",modtype = 12, mod = 2, costs = 400, description = "", centre = 0, font = 0, scale = 0.4}
 
 		}
 	},
@@ -1039,10 +1038,10 @@ local lsc = {
 		title = "engine tunes",
 		name = "engine",
 		buttons = {
-			{name = "EMS Upgrade, Level 1",modtype = 11, mod = -1, costs = 0, description = "", centre = 0, font = 0, scale = 0.4},
-			{name = "EMS Upgrade, Level 2",modtype = 11, mod = false, costs = 0, description = "", centre = 0, font = 0, scale = 0.4},
-			{name = "EMS Upgrade, Level 3",modtype = 11, mod = 1, costs = 0, description = "", centre = 0, font = 0, scale = 0.4},
-			{name = "EMS Upgrade, Level 4",modtype = 11, mod = 2, costs = 0, description = "", centre = 0, font = 0, scale = 0.4}
+			{name = "EMS Upgrade, Level 1",modtype = 11, mod = -1, costs = 1000, description = "", centre = 0, font = 0, scale = 0.4},
+			{name = "EMS Upgrade, Level 2",modtype = 11, mod = false, costs = 2000, description = "", centre = 0, font = 0, scale = 0.4},
+			{name = "EMS Upgrade, Level 3",modtype = 11, mod = 1, costs = 3000, description = "", centre = 0, font = 0, scale = 0.4},
+			{name = "EMS Upgrade, Level 4",modtype = 11, mod = 2, costs = 4000, description = "", centre = 0, font = 0, scale = 0.4}
 		}
 	},
 	["horn"] = {
@@ -1089,7 +1088,7 @@ local lsc = {
 		},
 	}
 }
-
+local modPrice = {} -- JINK: Table to store Mod prices. Possibly for a total money spent display.
 local vehiclecol = {}
 local extracol = {}
 local wheeltype = nil
@@ -1097,25 +1096,25 @@ local neoncolor = nil
 local plateindex = nil
 local windowtint = nil
 local mods = {
-[0] = { mod = nil },
-[1] = { mod = nil },
-[2] = { mod = nil },
-[3] = { mod = nil },
-[4] = { mod = nil },
-[5] = { mod = nil },
-[6] = { mod = nil },
-[7] = { mod = nil },
-[8] = { mod = nil },
-[9] = { mod = nil },
-[10] = { mod = nil },
-[11] = { mod = nil },
-[12] = { mod = nil },
-[13] = { mod = nil },
-[14] = { mod = nil },
-[15] = { mod = nil },
-[16] = { mod = nil },
-[23] = { mod = nil },
-[24] = { mod = nil },
+				[0] = { mod = nil },
+				[1] = { mod = nil },
+				[2] = { mod = nil },
+				[3] = { mod = nil },
+				[4] = { mod = nil },
+				[5] = { mod = nil },
+				[6] = { mod = nil },
+				[7] = { mod = nil },
+				[8] = { mod = nil },
+				[9] = { mod = nil },
+				[10] = { mod = nil },
+				[11] = { mod = nil },
+				[12] = { mod = nil },
+				[13] = { mod = nil },
+				[14] = { mod = nil },
+				[15] = { mod = nil },
+				[16] = { mod = nil },
+				[23] = { mod = nil },
+				[24] = { mod = nil },
 }
 
 function f(n)
@@ -1127,14 +1126,16 @@ return GetPlayerPed(-1)
 end
 
 function try(f, catch_f)
-local status, exception = pcall(f)
-if not status then
-catch_f(exception)
+	local status, exception = pcall(f)
+	if not status then
+		catch_f(exception)
+	end
 end
-end
+
 function firstToUpper(str)
     return (str:gsub("^%l", string.upper))
 end
+
 function DriveInGarage()
 		local pos = lsc.currentpos.inside
 		--TriggerServerEvent('print',"start")
@@ -1483,8 +1484,9 @@ function DriveOutOfGarage(pos)
     local plate = GetVehicleNumberPlateText(veh)
     local colors = table.pack(GetVehicleColours(veh))
     local extra_colors = table.pack(GetVehicleExtraColours(veh))
-		-- Die Mods können nicht gespeichert werden, wenn Sie nicht existieren.
-		-- Muss herausfinden ob ich die irgendwie auslesen kann
+     dump(modPrice)
+		-- The mods can not be saved if they do not exist.
+		-- Must find out if I can read them somehow
     TriggerServerEvent('UpdateVeh', plate, colors[1], colors[2], extra_colors[1], extra_colors[2], mods)
 	SetEntityCoords(veh,pos.x,pos.y,pos.z)
 	SetEntityHeading(veh,pos.heading)
@@ -1518,7 +1520,6 @@ function DriveOutOfGarage(pos)
 	SetVehicleDoorsLocked(veh,0)
 	TriggerServerEvent('lockGarage',false,lsc.currentgarage)
 	lsc.currentgarage = 0
-
 end
 
 function drawTxt(text,font,centre,x,y,scale,r,g,b,a)
@@ -1569,7 +1570,7 @@ function drawMenuCost(button,x,y,selected)
 	if button.costs == 0 then
 		AddTextComponentString("free")
 	else
-		AddTextComponentString(button.costs)
+		AddTextComponentString(tostring(button.costs))
 	end
 	DrawText(x + lsc.menu.width/2 - 0.035, y - lsc.menu.height/2 + 0.0028)
 end
@@ -1598,11 +1599,13 @@ function drawMenuTitle(txt,x,y)
 	DrawRect(x,y,lsc.menu.width,lsc.menu.height,0,0,0,150)
 	DrawText(x - lsc.menu.width/2 + 0.005, y - lsc.menu.height/2 + 0.0028)
 end
+
 function tablelength(T)
   local count = 0
   for _ in pairs(T) do count = count + 1 end
   return count
 end
+
 local backlock = false
 local horn = ''
 Citizen.CreateThread(function()
@@ -1902,10 +1905,33 @@ Citizen.CreateThread(function()
 	end
 end)
 
+-- DEBUG JINK: Dumps table contents in a readable format.
+function dump(o)
+   if type(o) == 'table' then
+      local s = '{ '
+      for k,v in pairs(o) do
+         if type(k) ~= 'number' then k = '"'..k..'"' end
+         s = s .. '['..k..'] = ' .. dump(v) .. ','
+      end
+      return s .. '} '
+   else
+      return tostring(o)
+   end
+end
 
 function ButtonSelected(button)
 	local ped = GetPlayerPed(-1)
 	local car = GetVehiclePedIsUsing(ped)
+ 	 -- DEBUG JINK
+ 	if button.costs == nil then
+		Citizen.Trace("Cost is : " .. tostring(button.costs))
+ 	else
+ 		Citizen.Trace("Cost is : " .. tostring(button.costs))
+ 		local modPrice = button.costs
+ 		TriggerServerEvent('receivePaymentInfo', modPrice)
+ 	end
+ 	-- END DEBUG JINK
+
 	if lsc.currentmenu == "repair" then
 		if button.name == "Repair vehicle" then
 			SetVehicleFixed(car)
@@ -2289,6 +2315,7 @@ end
 function stringstarts(String,Start)
    return string.sub(String,1,string.len(Start))==Start
 end
+
 function AddBlips()
 	for i,pos in ipairs(lsc.locations) do
 		local blip = AddBlipForCoord(pos.inside.x,pos.inside.y,pos.inside.z)
@@ -2299,15 +2326,22 @@ end
 --TODO: Event needed to add blips when player is spawned
 local firstspawn = 0
 AddEventHandler('playerSpawned', function(spawn)
-if firstspawn == 0 then
-	AddBlips()
-	TriggerServerEvent('getGarageInfo')
-	firstspawn = 1
-end
+	if firstspawn == 0 then
+		AddBlips()
+		TriggerServerEvent('getGarageInfo')
+		firstspawn = 1
+	end
 end)
+
 RegisterNetEvent('lockGarage')
 AddEventHandler('lockGarage', function(tbl)
 	for i,garage in ipairs(tbl) do
 		lsc.locations[i].locked = garage.locked
 	end
 end)
+
+-- RegisterNetEvent('blockPurchase')
+-- AddEventHandler('blockPurchase', function (blockPurchase)	-- TODO JINK working on the blocking of purchases if not enough cash
+ 
+
+-- end)

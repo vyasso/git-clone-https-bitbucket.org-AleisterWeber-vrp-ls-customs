@@ -1,31 +1,38 @@
+-- vRP framework
 local Tunnel = require("resources/vrp/lib/Tunnel")
-local Proxy = require("resources/vrp/lib/Proxy")
 local MySQL = require("resources/vrp/lib/MySQL/MySQL")
-vRP = Proxy.getInterface("vrp")
-vRPclient = Tunnel.getInterface("vrp","lscustoms")
+local Proxy = require("resources/vrp/lib/Proxy")
 
-local sql = MySQL.open("HOST","USER","PASSWORD","DATABASE")
+local sql = MySQL.open("HOST","USERNAME","PASSWORD","DATABASE") -- EDIT these values to the values of your sql servers
+
+vRP = Proxy.getInterface("vRP") --call the server-side API functions, get the vRP interface.
+vRPclient = Tunnel.getInterface("vRP","lscustoms") -- Tunnel access client to vRP with unique id
+
 local tbl = {
-[1] = {locked = false},
-[2] = {locked = false},
-[3] = {locked = false},
-[4] = {locked = false}
-}
+				[1] = {locked = false},
+				[2] = {locked = false},
+				[3] = {locked = false},
+				[4] = {locked = false},
+			}
+local paymentInfo = {}
+
 RegisterServerEvent('lockGarage')
 AddEventHandler('lockGarage', function(b,garage)
 	tbl[tonumber(garage)].locked = b
 	TriggerClientEvent('lockGarage',-1,tbl)
 	print(json.encode(tbl))
 end)
+
 RegisterServerEvent('getGarageInfo')
 AddEventHandler('getGarageInfo', function()
-TriggerClientEvent('lockGarage',-1,tbl)
-print(json.encode(tbl))
+	TriggerClientEvent('lockGarage',-1,tbl)
+	print(json.encode(tbl))
 end)
 
 RegisterServerEvent('UpdateVeh')
 AddEventHandler('UpdateVeh', function(plate, primarycolor, secondarycolor, pearlescentcolor, wheelcolor, mods)
-		local mods = mods
+
+	local mods = mods
     local primarycolor = primarycolor
     local secondarycolor = secondarycolor
     local pearlescentcolor = pearlescentcolor
@@ -50,11 +57,35 @@ AddEventHandler('UpdateVeh', function(plate, primarycolor, secondarycolor, pearl
 		end
 
 		for i,t in pairs(mods) do
-        print('Attempting to update mods')
-        if t.mod ~= nil then
-           print("Mod#: "..i.." Value: " .. t.mod)
-					 local q_update = sql:prepare("update vrp_user_vehicles set mod"..i.." = '"..t.mod.."' where car_id='"..carid.."'")
-					 q_update:execute()
-        end
-			end
+        	print('Attempting to update mods')
+        	if t.mod ~= nil then
+           		print("Mod#: "..i.." Value: " .. t.mod)
+			    local q_update = sql:prepare("update vrp_user_vehicles set mod"..i.." = '"..t.mod.."' where car_id='"..carid.."'")
+					  q_update:execute()
+        	end
+		end
+end)
+
+-- Payment Events
+RegisterServerEvent('receivePaymentInfo')
+AddEventHandler('receivePaymentInfo', function(modPrice)	
+	local user_id = vRP.getUserId({source}, function(user_id) return user_id end)
+	local wallet = vRP.getMoney({user_id})
+	local nWallet = wallet - modPrice
+	local paidAmount = vRP.tryPayment({user_id, modPrice})
+	local blockPurchase = false
+	
+ 	print("Player ID :" .. user_id .. " | Price : " .. modPrice .. " | Wallet : " .. wallet .. " | New Wallet : " .. nWallet) -- DEBUG message for jink
+
+ 	if paidAmount then
+ 		vRP.tryPayment({user_id, modPrice})
+ 		vRPclient.notify(user_id,{"Thanks for your purchase!"})
+ 		print("Debited" .. modPrice)
+ 	elseif not paidAmount then
+ 		local blockPurchase = not blockPurchase
+ 		vvRPclient.notify(user_id,{"Unsuccessful purchase!"})
+ 		TriggerClientEvent('blockPurchase', blockPurchase)
+ 		print("Payment not successful")
+ 	end
+
 end)
